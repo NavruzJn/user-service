@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { UserRepository } from '@src/persistence/repositories/user.repository';
 import { ITokenPayload } from '@src/application/auth/interfaces/token-payload';
 import { UserInterface } from '@src/domain/interfaces/user.interface';
+import { get } from 'env-var';
 
 @Injectable()
 export class AuthService {
@@ -12,13 +13,30 @@ export class AuthService {
         private jwtService: JwtService,
     ) {}
 
-    async validateUser(email: string, password: string): Promise<any> {
+    async validateUser(email: string, password: string): Promise<UserInterface> {
         const user = await this.userRepository.findBy({ where: { email } });
         if (user && (await bcrypt.compare(password, user.password))) {
-            const { password, ...result } = user;
-            return result;
+            return { ...user };
         }
-        return null;
+        throw new UnauthorizedException('Wrong Credentials');
+    }
+
+    async validateRefreshToken(refreshToken: string): Promise<UserInterface> {
+        const { sub } = this.jwtService.verify(refreshToken, {
+            secret: get('JWT_REFRESH_SECRET').required().asString(),
+            audience: get('JWT_AUDIENCE').required().asString(), // set from PROJECT base
+            issuer: get('JWT_ISSUER').required().asString(),
+        });
+
+        const user = await this.userRepository.findById(sub);
+
+        if (!user) {
+            throw new UnauthorizedException('Refresh token not verified');
+        }
+
+        return {
+            ...user,
+        };
     }
 
     async getTokens(user: UserInterface): Promise<{ accessToken: string; refreshToken: string }> {
@@ -31,21 +49,20 @@ export class AuthService {
 
     private signToken(payload: ITokenPayload): string {
         return this.jwtService.sign(payload, {
-            secret: 'secret',
-            expiresIn: '5m',
+            secret: get('JWT_SECRET').required().asString(),
             algorithm: 'HS256',
-            audience: 'user-service.audience', // set from PROJECT base
-            issuer: 'issues',
+            audience: get('JWT_AUDIENCE').required().asString(), // set from PROJECT base
+            issuer: get('JWT_ISSUER').required().asString(),
         });
     }
 
     private signRefreshToken(payload: ITokenPayload): string {
         return this.jwtService.sign(payload, {
-            secret: 'secret',
+            secret: get('JWT_REFRESH_SECRET').required().asString(),
             expiresIn: '1d',
             algorithm: 'HS256',
-            audience: 'user-service.audience', // set from PROJECT base
-            issuer: 'issuer',
+            audience: get('JWT_AUDIENCE').required().asString(),
+            issuer: get('JWT_ISSUER').required().asString(),
         });
     }
 }

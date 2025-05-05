@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, no-param-reassign */
-import { NestInterceptor, Logger, ExecutionContext, CallHandler, Injectable } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { NestInterceptor, Logger, ExecutionContext, CallHandler, Injectable, ConflictException } from '@nestjs/common';
 import { catchError, Observable } from 'rxjs';
 
 @Injectable()
@@ -27,6 +27,10 @@ export class GlobalExceptionInterceptor implements NestInterceptor {
                         body: request.body,
                     },
                 });
+
+                if (error.code === '23505') {
+                    throw new ConflictException('User already existis');
+                }
                 throw error;
             }),
         );

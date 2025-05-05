@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UserRepository } from '@src/persistence/repositories/user.repository';
-import { CreateUserDto } from '@src/application/types/create-user.dto';
 import { UserIdDto } from '@src/application/types/user-id.dto';
 import { GetUsersDto } from '@src/application/types/get-users.dto';
 import { GetUserResponse } from '@src/application/types/get-user.response';

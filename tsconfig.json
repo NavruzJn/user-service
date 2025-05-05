@@ -2,6 +2,7 @@
   "compilerOptions": {
     "strict": true,
     "module": "commonjs",
+    "types": ["jest"],
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,

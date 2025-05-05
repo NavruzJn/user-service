@@ -8,10 +8,13 @@ import { UpdateUserHandler } from '@src/application/handlers/update-user.handler
 import { DeleteUserHandler } from '@src/application/handlers/delete-user.handler';
 import { GetUsersHandler } from '@src/application/handlers/get-users.handler';
 import { PersistenceModule } from '@src/persistence/persistence.module';
+import { AuthModule } from '@src/application/auth/auth.module';
+import { AuthCommand } from '@src/application/commands/auth.command';
+import { AuthHandler } from '@src/application/handlers/auth.handler';
 
 @Module({
-    imports: [PersistenceModule],
-    controllers: [CreateUserCommand, UpdateUserCommand, DeleteUserCommand, GetUsersController],
-    providers: [CreateUserHandler, UpdateUserHandler, DeleteUserHandler, GetUsersHandler],
+    imports: [PersistenceModule, AuthModule],
+    controllers: [AuthCommand, CreateUserCommand, UpdateUserCommand, DeleteUserCommand, GetUsersController],
+    providers: [AuthHandler, CreateUserHandler, UpdateUserHandler, DeleteUserHandler, GetUsersHandler],
 })
 export class AppModule {}

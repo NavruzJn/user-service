@@ -1,7 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsIn, IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
+import { IsEnum, IsIn, IsNumber, IsOptional, Max, Min } from 'class-validator';
 import { SortOrderEnum } from '@src/application/constants/enums';
-import { userSortKeys } from '@src/persistence/constants/user-sort.keys';
+
+const userSortKeys = ['email', 'birthdate'];
 
 export class GetUsersDto {
     @ApiProperty()

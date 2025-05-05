@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NestInterceptor, Logger, ExecutionContext, CallHandler, Injectable } from '@nestjs/common';
 import { Observable, tap } from 'rxjs';
 import { v4 as uuidV4 } from 'uuid';
@@ -23,13 +23,12 @@ export class GlobalResponseInterceptor implements NestInterceptor {
                 next: (res) => {
                     this.logger.log({
                         requestId,
-                        info: 'Api Gateway Response',
+                        info: 'gateway_response',
                         context: {
                             handler,
                             cls,
                         },
                         response: {
-                            // contentLength: res.get('content-length'),
                             body: res,
                         },
                     });

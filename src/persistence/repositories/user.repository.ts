@@ -12,7 +12,11 @@ export class UserRepository {
     constructor(@InjectRepository(UserOrmEntity) private readonly userRepository: Repository<UserOrmEntity>) {}
 
     public save(user: UserInterface): Promise<UserOrmEntity> {
-        return this.userRepository.save(user);
+        // new entity is needed to trigger bcrypt hash (plain obj does not trigger hooks)
+        const userEntity = new UserOrmEntity({
+            ...user,
+        });
+        return this.userRepository.save(userEntity);
     }
 
     public delete(id: string): Promise<DeleteResult> {
@@ -33,17 +37,15 @@ export class UserRepository {
         sortBy?: string;
         sortOrder?: SortOrderEnum;
     }): Promise<{ users: UserOrmEntity[]; count: number }> {
-        const { page, pageSize, sortBy, sortOrder } = query;
+        // pagination query
+        const { page, pageSize, sortBy = 'createdAt', sortOrder = SortOrderEnum.DESC } = query;
         const options: FindManyOptions<UserOrmEntity> = {
             skip: (page - 1) * pageSize,
             take: pageSize,
-        };
-
-        if (sortBy && sortOrder) {
-            options.order = {
+            order: {
                 [sortBy]: sortOrder,
-            };
-        }
+            },
+        };
 
         const [users, count] = await this.userRepository.findAndCount(options);
 

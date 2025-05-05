@@ -12,14 +12,7 @@ export class CreateUserHandler {
             id: uuidV4(),
             ...dto,
         };
-        try {
-            return this.userRepository.save(newUser);
-        } catch (error) {
-            // 23505 typeorm conflict constraint error
-            if ((error as any).code === '23505') {
-                throw new ConflictException('Email already exists');
-            }
-            throw error;
-        }
+
+        return this.userRepository.save(newUser);
     }
 }

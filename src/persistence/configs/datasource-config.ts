@@ -10,7 +10,7 @@ export const datasourceConfig = new DataSource({
     password: get('DB_PASSWORD').required().asString(),
     database: get('DB_NAME').required().asString(),
     entities: [UserOrmEntity],
-    migrations: ['@src/persistence/migrations/*'],
+    migrations: ['src/persistence/migrations/*'],
     synchronize: false,
     namingStrategy: new SnakeNamingStrategy(),
 });

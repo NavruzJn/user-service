@@ -13,6 +13,17 @@ import { GlobalResponseInterceptor } from '@src/libs/global/global.response.inte
 import { GlobalExceptionInterceptor } from '@src/libs/global/global.exception.interceptor';
 import { AppModule } from '@src/application/app.module';
 
+const rawBodyBuffer = (
+     
+    req: { rawBody?: string },
+    res: Response,
+    buffer: Buffer,
+): void => {
+    if (buffer && buffer.length) {
+        req.rawBody = buffer.toString();
+    }
+};
+
 async function bootstrap(): Promise<void> {
     const appPort = get('APP_PORT').required().asPortNumber();
 
@@ -54,11 +65,13 @@ async function bootstrap(): Promise<void> {
         .build();
 
     const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('doc', app, document);
+    SwaggerModule.setup('doc', app, document, {
+        jsonDocumentUrl: 'swagger/json',
+    });
 
     await app.listen(appPort);
     logger.info(`Application is running at: ${await app.getUrl()}`);
 }
 
-/* eslint-disable-next-line @typescript-eslint/no-floating-promises */
+ 
 bootstrap();

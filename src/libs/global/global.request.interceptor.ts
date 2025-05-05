@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NestInterceptor, ExecutionContext, CallHandler, Logger, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
 
@@ -12,7 +12,7 @@ export class GlobalRequestInterceptor implements NestInterceptor {
         const handler = context.getHandler().name;
         const cls = context.getClass().name;
         this.logger.log({
-            info: 'Api Gateway Request',
+            info: 'gateway_request',
             context: {
                 handler,
                 cls,
@@ -24,12 +24,12 @@ export class GlobalRequestInterceptor implements NestInterceptor {
                 headers: request.headers,
                 params: request.params,
                 query: request.query,
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                 
                 brand: request.hostname.split('.')[1],
             },
         });
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+         
         request.brand = request.hostname.split('.')[1] || 'local';
 
         return next.handle();
