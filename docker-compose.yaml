@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+    user-service-postgres:
+        image: postgres:13
+        environment:
+          PGDATA: /docker/var/lib/postgresql/data
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: users
+        ports:
+          - 5432:5432
+        volumes:
+          - ./docker/var/postgres/data:/var/lib/postgresql/data
+
+    user-service:
+        build:
+           context: ./
+           dockerfile: Dockerfile.dev
+        ports:
+           - 3000:3000
+        env_file:
+           - ./.env.docker
+        volumes:
+           - ./:/home/node
+        depends_on:
+           - user-service-postgres
