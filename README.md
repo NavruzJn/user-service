@@ -13,7 +13,7 @@ ____
 Package manager depends on taste and preferences.
 2. ```yarn start:dev```
 <br> Start:dev command runs migration revert to clean DB and create users table. After setting up tables 
-we need seed to test the project. It will create new user with **email: admin**, **password: password**.
+we need seed to test the project. It will create a new user with **email: admin**, **password: password**.
 3. ```Open localhost:3000/doc``` to test the endpoints in swagger
 
 ### Docker
